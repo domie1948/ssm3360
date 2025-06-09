@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.YingpinDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yingpin_name as yingpinName
+        ,a.yingpin_phone as yingpinPhone
+        ,a.yingpin_id_number as yingpinIdNumber
+        ,a.yonghu_photo as yonghuPhoto
+        ,a.sex_types as sexTypes
+        ,a.yingpin_zhiwei as yingpinZhiwei
+        ,a.yonghu_content as yonghuContent
+        ,a.luyong_types as luyongTypes
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.YingpinView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM yingpin  a
+
+        <where>
+            <if test=" params.yingpinName != '' and params.yingpinName != null and params.yingpinName != 'null' ">
+                and a.yingpin_name like CONCAT('%',#{params.yingpinName},'%')
+            </if>
+            <if test=" params.yingpinPhone != '' and params.yingpinPhone != null and params.yingpinPhone != 'null' ">
+                and a.yingpin_phone like CONCAT('%',#{params.yingpinPhone},'%')
+            </if>
+            <if test=" params.yingpinIdNumber != '' and params.yingpinIdNumber != null and params.yingpinIdNumber != 'null' ">
+                and a.yingpin_id_number like CONCAT('%',#{params.yingpinIdNumber},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and a.sex_types = #{params.sexTypes}
+            </if>
+            <if test=" params.yingpinZhiwei != '' and params.yingpinZhiwei != null and params.yingpinZhiwei != 'null' ">
+                and a.yingpin_zhiwei like CONCAT('%',#{params.yingpinZhiwei},'%')
+            </if>
+            <if test=" params.yonghuContent != '' and params.yonghuContent != null and params.yonghuContent != 'null' ">
+                and a.yonghu_content like CONCAT('%',#{params.yonghuContent},'%')
+            </if>
+            <if test="params.luyongTypes != null">
+                and a.luyong_types = #{params.luyongTypes}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>

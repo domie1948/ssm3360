@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.RenwuDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yonghu_id as yonghuId
+        ,a.renwu_name as renwuName
+        ,a.renwu_types as renwuTypes
+        ,a.renwu_time as renwuTime
+        ,a.renwu_content as renwuContent
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.RenwuView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,yonghu.yonghu_number as yonghuNumber
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.sex_types as sexTypes
+        ,yonghu.bumen_types as bumenTypes
+        ,yonghu.zhiwu_types as zhiwuTypes
+        ,yonghu.chushengriqi_time as chushengriqiTime
+        ,yonghu.ruzhi_time as ruzhiTime
+        ,yonghu.yonghu_content as yonghuContent
+
+        FROM renwu  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test=" params.renwuName != '' and params.renwuName != null and params.renwuName != 'null' ">
+                and a.renwu_name like CONCAT('%',#{params.renwuName},'%')
+            </if>
+            <if test="params.renwuTypes != null">
+                and a.renwu_types = #{params.renwuTypes}
+            </if>
+            <if test=" params.renwuTimeStart != '' and params.renwuTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.renwu_time) >= UNIX_TIMESTAMP(#{params.renwuTimeStart}) ]]>
+            </if>
+            <if test=" params.renwuTimeEnd != '' and params.renwuTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.renwu_time) <= UNIX_TIMESTAMP(#{params.renwuTimeEnd}) ]]>
+            </if>
+            <if test=" params.renwuContent != '' and params.renwuContent != null and params.renwuContent != 'null' ">
+                and a.renwu_content like CONCAT('%',#{params.renwuContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+            <if test=" params.yonghuNumber != '' and params.yonghuNumber != null and params.yonghuNumber != 'null' ">
+                and yonghu.yonghu_number like CONCAT('%',#{params.yonghuNumber},'%')
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and yonghu.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test="params.bumenTypes != null">
+                and yonghu.bumen_types = #{params.bumenTypes}
+            </if>
+
+            <if test="params.zhiwuTypes != null">
+                and yonghu.zhiwu_types = #{params.zhiwuTypes}
+            </if>
+
+            <if test=" params.chushengriqiTimeStart != '' and params.chushengriqiTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yonghu.chushengriqi_time) >= UNIX_TIMESTAMP(#{params.chushengriqiTimeStart}) ]]>
+            </if>
+            <if test=" params.chushengriqiTimeEnd != '' and params.chushengriqiTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yonghu.chushengriqi_time) <= UNIX_TIMESTAMP(#{params.chushengriqiTimeEnd}) ]]>
+            </if>
+            <if test=" params.ruzhiTimeStart != '' and params.ruzhiTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yonghu.ruzhi_time) >= UNIX_TIMESTAMP(#{params.ruzhiTimeStart}) ]]>
+            </if>
+            <if test=" params.ruzhiTimeEnd != '' and params.ruzhiTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yonghu.ruzhi_time) <= UNIX_TIMESTAMP(#{params.ruzhiTimeEnd}) ]]>
+            </if>
+            <if test=" params.yonghuContent != '' and params.yonghuContent != null and params.yonghuContent != 'null' ">
+                and yonghu.yonghu_content like CONCAT('%',#{params.yonghuContent},'%')
+            </if>
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>
